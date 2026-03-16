@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lyna Math Number Game</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%23ffe3f1'/><circle cx='16' cy='16' r='8' fill='%23ff9ac6'/><text x='16' y='20' text-anchor='middle' font-size='12' font-family='Arial' font-weight='900' fill='white'>+</text><circle cx='48' cy='16' r='8' fill='%23a9d6ff'/><text x='48' y='20' text-anchor='middle' font-size='11' font-family='Arial' font-weight='900' fill='white'>×</text><circle cx='16' cy='48' r='8' fill='%23c7a6ff'/><text x='16' y='52' text-anchor='middle' font-size='12' font-family='Arial' font-weight='900' fill='white'>−</text><circle cx='48' cy='48' r='8' fill='%23ffcf66'/><text x='48' y='52' text-anchor='middle' font-size='8' font-family='Arial' font-weight='900' fill='white'>123</text><text x='32' y='39' text-anchor='middle' font-size='24' font-family='Trebuchet MS, Arial' font-weight='900' fill='%23ff5f8f' stroke='white' stroke-width='2' paint-order='stroke'>L</text></svg>" />
+  <style>
+    :root {
+      --card: #ffffff;
+      --text: #24324a;
+      --pink: #ff7eb6;
+      --blue: #6ec6ff;
+      --yellow: #ffd166;
+      --green: #7bd389;
+      --purple: #b197fc;
+      --shadow: 0 8px 18px rgba(36, 50, 74, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Trebuchet MS", "Comic Sans MS", Arial, sans-serif;
+      background: #f7fbff;
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 10px 10px 18px;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      color: #ff5f8f;
+    }
+
+    .hero p {
+      margin: 10px auto 0;
+      max-width: 700px;
+      font-size: 1.08rem;
+      line-height: 1.5;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 24px;
+      border: 1px solid #e5eef7;
+      margin-bottom: 20px;
+    }
+
+    .setup-row,
+    .answer-row,
+    .operation-buttons,
+    .stats-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .setup-row {
+      grid-template-columns: 1fr auto;
+      align-items: end;
+    }
+
+    .answer-row {
+      grid-template-columns: 1fr auto auto;
+      align-items: end;
+      margin-top: 18px;
+    }
+
+    .operation-buttons {
+      grid-template-columns: repeat(3, 1fr);
+      margin-top: 14px;
+    }
+
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+      margin-top: 18px;
+    }
+
+    label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 8px;
+      font-size: 1.05rem;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+      width: 100%;
+      padding: 16px 18px;
+      border-radius: 16px;
+      border: 3px solid #d8e6f2;
+      font-size: 1.1rem;
+      outline: none;
+      transition: 0.2s ease;
+    }
+
+    input:focus {
+      border-color: var(--purple);
+      box-shadow: 0 0 0 4px rgba(177, 151, 252, 0.18);
+    }
+
+    button {
+      border: none;
+      border-radius: 18px;
+      padding: 14px 18px;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+      box-shadow: 0 8px 15px rgba(0,0,0,0.08);
+    }
+
+    button:hover { transform: translateY(-1px); }
+
+    .primary-btn { background: linear-gradient(135deg, #ff8fb8, #ff5f8f); color: white; }
+    .check-btn { background: linear-gradient(135deg, #7bd389, #42ba68); color: white; }
+    .next-btn { background: linear-gradient(135deg, #6ec6ff, #3ea8ff); color: white; }
+    .small-btn { padding: 12px 14px; font-size: 0.95rem; }
+
+    .op-btn { color: white; font-size: 1.05rem; }
+    .op-btn.add { background: linear-gradient(135deg, #ffd166, #ffb703); }
+    .op-btn.sub { background: linear-gradient(135deg, #6ec6ff, #3a86ff); }
+    .op-btn.mul { background: linear-gradient(135deg, #b197fc, #8e63ff); }
+    .op-btn.active {
+      outline: 4px solid rgba(36,50,74,0.14);
+      transform: scale(1.02);
+    }
+
+    .hint-box {
+      margin-top: 14px;
+      padding: 14px;
+      background: #f5f8ff;
+      border: 2px solid #d9e7f7;
+      border-radius: 16px;
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
+    .player-banner {
+      margin-top: 18px;
+      background: #fff7d6;
+      border-radius: 18px;
+      padding: 16px 18px;
+      font-size: 1.15rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .points-inline {
+      font-size: 1.05rem;
+      font-weight: 900;
+      color: #ff5f8f;
+    }
+
+    .mode-banner {
+      margin-top: 18px;
+      background: #eef6ff;
+      border: 3px solid #b9dfff;
+      border-radius: 20px;
+      padding: 16px 18px;
+      text-align: center;
+    }
+
+    .mode-title {
+      font-size: 1rem;
+      color: #4d6b8a;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .mode-value {
+      font-size: 1.7rem;
+      font-weight: 900;
+      color: #22476d;
+    }
+
+    .problem-box {
+      margin-top: 20px;
+      text-align: center;
+      background: #f9fcff;
+      border: 3px dashed #b9dfff;
+      border-radius: 24px;
+      padding: 30px 18px;
+    }
+
+    .problem-label {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #4d6b8a;
+      margin-bottom: 10px;
+    }
+
+    .problem-text {
+      font-size: clamp(2.8rem, 7vw, 4.4rem);
+      font-weight: 900;
+      letter-spacing: 2px;
+      margin: 8px 0 18px;
+    }
+
+    .feedback {
+      margin-top: 18px;
+      min-height: 88px;
+      border-radius: 20px;
+      padding: 16px;
+      font-size: 1.05rem;
+      line-height: 1.55;
+      background: #f8fbff;
+      border: 3px solid #ddebf8;
+    }
+
+    .feedback.good { background: #effcf2; border-color: #b8ebc3; }
+    .feedback.retry { background: #fff7e8; border-color: #ffe0a3; }
+    .feedback.move { background: #fff1f1; border-color: #ffc7c7; }
+
+    .big-points {
+      background: linear-gradient(135deg, #ff8fb8, #ff5f8f);
+      color: white;
+      border-radius: 24px;
+      text-align: center;
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .big-points-label {
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+
+    .big-points-value {
+      font-size: 3rem;
+      font-weight: 900;
+      line-height: 1.1;
+      display: block;
+      margin-top: 6px;
+    }
+
+    .stat-box {
+      padding: 18px;
+      border-radius: 22px;
+      color: white;
+      text-align: center;
+    }
+
+    .stat-box:nth-child(1) { background: linear-gradient(135deg, #6ec6ff, #3ea8ff); }
+    .stat-box:nth-child(2) { background: linear-gradient(135deg, #7bd389, #42ba68); }
+
+    .stat-value {
+      display: block;
+      font-size: 2rem;
+      font-weight: 900;
+      margin-top: 6px;
+    }
+
+    .score-title {
+      text-align: center;
+      margin-top: 0;
+      margin-bottom: 16px;
+    }
+
+    .celebration {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255,0.9);
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .celebration.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .celebration-text {
+      font-size: clamp(2.6rem, 9vw, 6rem);
+      font-weight: 900;
+      color: #ff5f8f;
+      text-align: center;
+      padding: 24px;
+      animation: pop 0.35s ease;
+    }
+
+    @keyframes pop {
+      0% { transform: scale(0.6); }
+      100% { transform: scale(1); }
+    }
+
+    @media (max-width: 760px) {
+      .setup-row,
+      .answer-row,
+      .operation-buttons,
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <section class="hero">
+      <div style="display:flex; justify-content:center; margin:0 auto 22px;">
+        <svg width="720" height="260" viewBox="0 0 420 170" role="img" aria-label="Lyna fun math logo" style="max-width:680px; width:100%; height:auto; display:block;">
+          <defs>
+            <linearGradient id="logoBgGirl" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#ffe9f5"></stop>
+              <stop offset="50%" stop-color="#fff3b8"></stop>
+              <stop offset="100%" stop-color="#dff4ff"></stop>
+            </linearGradient>
+            <filter id="softShadowGirl" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000000" flood-opacity="0.16"></feDropShadow>
+            </filter>
+          </defs>
+
+          <rect x="8" y="8" width="404" height="154" rx="28" fill="url(#logoBgGirl)" stroke="#ffffff" stroke-width="6"></rect>
+
+          <circle cx="42" cy="38" r="14" fill="#ff9ac6"></circle>
+          <text x="42" y="43" text-anchor="middle" font-size="18" font-weight="900" fill="#ffffff">+</text>
+
+          <circle cx="378" cy="38" r="14" fill="#8cc8ff"></circle>
+          <text x="378" y="43" text-anchor="middle" font-size="16" font-weight="900" fill="#ffffff">×</text>
+
+          <circle cx="64" cy="128" r="12" fill="#c7a6ff"></circle>
+          <text x="64" y="133" text-anchor="middle" font-size="16" font-weight="900" fill="#ffffff">−</text>
+
+          <circle cx="356" cy="128" r="12" fill="#ffd166"></circle>
+          <text x="356" y="132" text-anchor="middle" font-size="10" font-weight="900" fill="#ffffff">123</text>
+
+          <g transform="translate(88,26)" filter="url(#softShadowGirl)">
+            <text x="0" y="56" font-family="Trebuchet MS, Arial, sans-serif" font-size="56" font-weight="900" fill="#ff76b7" stroke="#ffffff" stroke-width="5" paint-order="stroke">L</text>
+            <text x="36" y="56" font-family="Trebuchet MS, Arial, sans-serif" font-size="56" font-weight="900" fill="#ffb347" stroke="#ffffff" stroke-width="5" paint-order="stroke">y</text>
+            <text x="72" y="56" font-family="Trebuchet MS, Arial, sans-serif" font-size="56" font-weight="900" fill="#7dd87d" stroke="#ffffff" stroke-width="5" paint-order="stroke">n</text>
+            <text x="110" y="56" font-family="Trebuchet MS, Arial, sans-serif" font-size="56" font-weight="900" fill="#6ec6ff" stroke="#ffffff" stroke-width="5" paint-order="stroke">a</text>
+          </g>
+
+          <rect x="116" y="92" width="188" height="34" rx="17" fill="#ff78ab"></rect>
+          <text x="210" y="114" text-anchor="middle" font-family="Trebuchet MS, Arial, sans-serif" font-size="18" font-weight="900" fill="#ffffff">Fun Math Game</text>
+
+          <g transform="translate(22,78)">
+            <circle cx="26" cy="18" r="18" fill="#ffd36b"></circle>
+            <circle cx="20" cy="14" r="2.5" fill="#333"></circle>
+            <circle cx="32" cy="14" r="2.5" fill="#333"></circle>
+            <path d="M18 23 Q26 30 34 23" fill="none" stroke="#333" stroke-width="2.5" stroke-linecap="round"></path>
+            <line x1="26" y1="-8" x2="26" y2="-16" stroke="#ffd36b" stroke-width="3" stroke-linecap="round"></line>
+            <line x1="12" y1="-3" x2="6" y2="-9" stroke="#ffd36b" stroke-width="3" stroke-linecap="round"></line>
+            <line x1="40" y1="-3" x2="46" y2="-9" stroke="#ffd36b" stroke-width="3" stroke-linecap="round"></line>
+            <line x1="8" y1="12" x2="0" y2="12" stroke="#ffd36b" stroke-width="3" stroke-linecap="round"></line>
+            <line x1="44" y1="12" x2="52" y2="12" stroke="#ffd36b" stroke-width="3" stroke-linecap="round"></line>
+          </g>
+
+          <g transform="translate(328,70)">
+            <circle cx="18" cy="18" r="16" fill="#ffb6d9"></circle>
+            <path d="M10 17 C10 11, 17 9, 18 14 C19 9, 26 11, 26 17 C26 24, 18 29, 18 29 C18 29, 10 24, 10 17 Z" fill="#ffffff"></path>
+          </g>
+
+          <g transform="translate(302,28)">
+            <polygon points="12,0 15,9 24,9 17,15 20,24 12,18 4,24 7,15 0,9 9,9" fill="#ffd54f"></polygon>
+          </g>
+          <g transform="translate(320,120)">
+            <polygon points="10,0 12,7 20,7 14,12 16,20 10,15 4,20 6,12 0,7 8,7" fill="#ff9ac6"></polygon>
+          </g>
+        </svg>      </div>
+      
+    </section>
+
+    <section class="card">
+      <div class="setup-row">
+        <div>
+          <label for="playerName">Child's Name</label>
+          <input id="playerName" type="text" placeholder="Type the child's name here" maxlength="20" />
+        </div>
+        <button id="startBtn" class="primary-btn">Start Game</button>
+      </div>
+
+      <div class="operation-buttons">
+        <button class="op-btn add active" data-mode="add">➕ Adding</button>
+        <button class="op-btn sub" data-mode="sub">➖ Subtracting</button>
+        <button class="op-btn mul" data-mode="mul">✖️ Multiplying</button>
+      </div>
+
+      <div class="hint-box" id="hintBox">
+        <strong>Hint:</strong> Pick an operation and solve the problem step by step.
+      </div>
+
+      <div class="player-banner">
+        <div id="welcomeText">👋 Hello, little learner!</div>
+        <div class="points-inline" id="pointsInline">Points Earned: 0</div>
+      </div>
+
+      <div class="mode-banner">
+        <div class="mode-title">You are playing</div>
+        <div class="mode-value" id="modeValue">Adding ➕</div>
+      </div>
+
+      <div class="problem-box">
+        <div class="problem-label">Solve this math problem:</div>
+        <div class="problem-text" id="problemText">2 + 1 = ?</div>
+      </div>
+
+      <div class="answer-row">
+        <div>
+          <label for="answerInput">Your Answer</label>
+          <input id="answerInput" type="number" placeholder="Type your answer" />
+        </div>
+        <button id="checkBtn" class="check-btn">Check</button>
+        <button id="nextBtn" class="next-btn">Next Problem</button>
+      </div>
+
+      <div id="feedback" class="feedback">
+        Enter a name and press <strong>Start Game</strong> to begin the fun.
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 class="score-title">Game Scoreboard</h2>
+      <div class="big-points">
+        <div class="big-points-label">POINTS EARNED</div>
+        <span class="big-points-value" id="scoreValue">0</span>
+      </div>
+
+      <div class="stats-grid">
+        
+        <div class="stat-box">
+          Correct
+          <span class="stat-value" id="correctValue">0</span>
+        </div>
+      </div>
+
+      <button id="resetBtn" class="primary-btn small-btn" style="width:100%; margin-top:16px;">Reset Game</button>
+    </section>
+  </div>
+
+  <div class="celebration" id="celebration">
+    <div class="celebration-text" id="celebrationText">Excellent!</div>
+  </div>
+
+  <script>
+    const state = {
+      playerName: "",
+      mode: "add",
+      score: 0,
+      triesLeft: 3,
+      correct: 0,
+      started: false,
+      currentProblem: null
+    };
+
+    const praiseWords = ["Excellent", "Good", "Awesome", "Fantastic"];
+
+    const elements = {
+      playerName: document.getElementById("playerName"),
+      startBtn: document.getElementById("startBtn"),
+      checkBtn: document.getElementById("checkBtn"),
+      nextBtn: document.getElementById("nextBtn"),
+      resetBtn: document.getElementById("resetBtn"),
+      answerInput: document.getElementById("answerInput"),
+      problemText: document.getElementById("problemText"),
+      feedback: document.getElementById("feedback"),
+      welcomeText: document.getElementById("welcomeText"),
+      pointsInline: document.getElementById("pointsInline"),
+      modeValue: document.getElementById("modeValue"),
+      scoreValue: document.getElementById("scoreValue"),
+            correctValue: document.getElementById("correctValue"),
+      hintBox: document.getElementById("hintBox"),
+      celebration: document.getElementById("celebration"),
+      celebrationText: document.getElementById("celebrationText"),
+      opButtons: document.querySelectorAll(".op-btn")
+    };
+
+    function randomInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function generateProblem(mode) {
+      let a, b, text, answer, explanation;
+
+      if (mode === "add") {
+        a = randomInt(1, 10);
+        b = randomInt(1, 10);
+        text = `${a} + ${b} = ?`;
+        answer = a + b;
+        explanation = `For adding, put the two groups together. Make sure you are combining both numbers, not leaving one out.`;
+      } else if (mode === "sub") {
+        a = randomInt(3, 12);
+        b = randomInt(1, a - 1);
+        text = `${a} - ${b} = ?`;
+        answer = a - b;
+        explanation = `For subtracting, start with the bigger number and take away the smaller number. Be careful not to add by mistake.`;
+      } else {
+        a = randomInt(1, 5);
+        b = randomInt(1, 5);
+        text = `${a} × ${b} = ?`;
+        answer = a * b;
+        explanation = `For multiplying, think of equal groups. ${a} × ${b} means ${a} groups of ${b}, or skip-count carefully.`;
+      }
+
+      return { a, b, mode, text, answer, explanation };
+    }
+
+    function getModeLabel() {
+      if (state.mode === "add") return "adding";
+      if (state.mode === "sub") return "subtracting";
+      return "multiplication";
+    }
+
+    function getModeDisplayName() {
+      if (state.mode === "add") return "Adding ➕";
+      if (state.mode === "sub") return "Subtracting ➖";
+      return "Multiplication ✖️";
+    }
+
+    function showCelebration(text) {
+      const nameToShow = state.playerName || "Lyna";
+      elements.celebrationText.textContent = `${text} ${nameToShow}!`;
+      elements.celebration.classList.add("show");
+      setTimeout(() => {
+        elements.celebration.classList.remove("show");
+      }, 1000);
+    }
+
+    function setFeedback(message, kind = "") {
+      elements.feedback.className = `feedback ${kind}`.trim();
+      elements.feedback.innerHTML = message;
+    }
+
+    function updateHint() {
+      if (!state.currentProblem) return;
+      const p = state.currentProblem;
+      let hint = "";
+
+      if (p.mode === "add") {
+        hint = `Hint: Adding means putting ${p.a} and ${p.b} together.`;
+      } else if (p.mode === "sub") {
+        hint = `Hint: Subtracting means starting at ${p.a} and taking away ${p.b}.`;
+      } else {
+        hint = `Hint: Multiplying means equal groups. Think of ${p.a} groups of ${p.b}.`;
+      }
+
+      elements.hintBox.innerHTML = `<strong>Hint:</strong> ${hint}`;
+    }
+
+    function updateView() {
+      elements.scoreValue.textContent = state.score;
+      elements.pointsInline.textContent = `Points Earned: ${state.score}`;
+            elements.correctValue.textContent = state.correct;
+      elements.modeValue.textContent = getModeDisplayName();
+      elements.welcomeText.textContent = state.playerName
+        ? `🎉 ${state.playerName} is playing!`
+        : "👋 Hello, little learner!";
+
+      if (state.currentProblem) {
+        elements.problemText.textContent = state.currentProblem.text;
+      }
+    }
+
+    function nextProblem(similar = false) {
+      state.currentProblem = generateProblem(state.mode);
+      state.triesLeft = 3;
+      elements.answerInput.value = "";
+      updateView();
+      updateHint();
+
+      if (similar) {
+        setFeedback(`Let's try a similar <strong>${getModeLabel()}</strong> problem now. You can do it!`, "move");
+      } else {
+        setFeedback(`Here is your next <strong>${getModeLabel()}</strong> problem. Look at the math sign and have fun!`);
+      }
+
+      elements.answerInput.focus();
+    }
+
+    function startGame() {
+      const name = elements.playerName.value.trim();
+      state.playerName = name || "Lyna";
+      state.score = 0;
+      state.triesLeft = 3;
+      state.correct = 0;
+      state.started = true;
+      state.currentProblem = generateProblem(state.mode);
+      updateView();
+      updateHint();
+      setFeedback(`Welcome, <strong>${state.playerName}</strong>! You are now playing <strong>${getModeDisplayName()}</strong>.`);
+      elements.answerInput.focus();
+    }
+
+    function explainWrong(inputValue) {
+      return `Wrong try again.`;
+    }
+
+    function checkAnswer() {
+      if (!state.started) {
+        setFeedback(`Please enter a name and press <strong>Start Game</strong> first.`, "retry");
+        return;
+      }
+
+      const raw = elements.answerInput.value.trim();
+      if (raw === "") {
+        setFeedback(`Please type an answer before checking.`, "retry");
+        return;
+      }
+
+      const userAnswer = Number(raw);
+      const correctAnswer = state.currentProblem.answer;
+
+      if (userAnswer === correctAnswer) {
+        const praise = praiseWords[randomInt(0, praiseWords.length - 1)];
+        state.score += 10;
+        state.correct += 1;
+        showCelebration(praise);
+        setFeedback(`<strong>${praise} ${state.playerName || "Lyna"}!</strong> 🎉 Correct answer. <strong>+10 points</strong>!`, "good");
+        updateView();
+        setTimeout(() => nextProblem(false), 1000);
+        return;
+      }
+
+      state.triesLeft -= 1;
+      updateView();
+
+      if (state.triesLeft > 0) {
+        setFeedback(`<strong>Wrong try again</strong>`, "retry");
+      } else {
+        setFeedback(`<strong>Wrong try again, you can do it Lyna</strong>`, "move");
+        setTimeout(() => nextProblem(true), 1400);
+      }
+    }
+
+    function setMode(newMode) {
+      state.mode = newMode;
+      elements.opButtons.forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.mode === newMode);
+      });
+
+      if (state.started) {
+        nextProblem(false);
+      } else {
+        state.currentProblem = generateProblem(state.mode);
+        updateView();
+        updateHint();
+      }
+    }
+
+    function resetGame() {
+      state.playerName = "";
+      state.score = 0;
+      state.triesLeft = 3;
+      state.correct = 0;
+      state.started = false;
+      state.currentProblem = generateProblem(state.mode);
+      elements.playerName.value = "";
+      elements.answerInput.value = "";
+      updateView();
+      updateHint();
+      setFeedback(`Game reset! Enter a name and press <strong>Start Game</strong> to play again.`);
+    }
+
+    elements.startBtn.addEventListener("click", startGame);
+    elements.checkBtn.addEventListener("click", checkAnswer);
+    elements.nextBtn.addEventListener("click", () => {
+      if (!state.started) {
+        setFeedback(`Start the game first, then you can go to the next problem.`, "retry");
+        return;
+      }
+      nextProblem(false);
+    });
+    elements.resetBtn.addEventListener("click", resetGame);
+
+    elements.answerInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") checkAnswer();
+    });
+
+    elements.opButtons.forEach(btn => {
+      btn.addEventListener("click", () => setMode(btn.dataset.mode));
+    });
+
+    state.currentProblem = generateProblem(state.mode);
+    updateView();
+    updateHint();
+  </script>
+</body>
+</html>
