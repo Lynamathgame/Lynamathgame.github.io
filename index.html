@@ -76,9 +76,12 @@
     }
 
     .answer-row {
-      grid-template-columns: 1fr auto auto;
-      align-items: end;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      align-items: center;
       margin-top: 18px;
+      flex-wrap: wrap;
     }
 
     .operation-buttons {
@@ -195,11 +198,38 @@
 
     .problem-box {
       margin-top: 20px;
-      text-align: center;
       background: #f9fcff;
       border: 3px dashed #b9dfff;
       border-radius: 24px;
-      padding: 30px 18px;
+      padding: 26px 18px;
+      text-align: center;
+    }
+
+    .problem-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .answer-inline {
+      width: 120px;
+      max-width: 100%;
+      padding: 14px 12px;
+      border-radius: 16px;
+      border: 3px solid #d8e6f2;
+      font-size: 1.6rem;
+      font-weight: 800;
+      text-align: center;
+      background: #ffffff;
+    }
+
+    .answer-inline:focus {
+      border-color: var(--purple);
+      box-shadow: 0 0 0 4px rgba(177, 151, 252, 0.18);
+      outline: none;
     }
 
     .problem-label {
@@ -311,11 +341,23 @@
 
     @media (max-width: 760px) {
       .setup-row,
-      .answer-row,
       .operation-buttons,
       .stats-grid {
         grid-template-columns: 1fr;
       }
+
+      .answer-row {
+        flex-direction: column;
+      }
+
+      .problem-row {
+        flex-direction: column;
+      }
+
+      .answer-inline {
+        width: 140px;
+      }
+    }
     }
   </style>
 </head>
@@ -418,14 +460,14 @@
 
       <div class="problem-box">
         <div class="problem-label">Solve this math problem:</div>
-        <div class="problem-text" id="problemText">2 + 1 = ?</div>
+        <div class="problem-row">
+          <div class="problem-text" id="problemText">2 + 1 =</div>
+          <input id="answerInput" class="answer-inline" type="number" placeholder="?" />
+        </div>
       </div>
 
       <div class="answer-row">
-        <div>
-          <label for="answerInput">Your Answer</label>
-          <input id="answerInput" type="number" placeholder="Type your answer" />
-        </div>
+        
         <button id="checkBtn" class="check-btn">Check</button>
         <button id="nextBtn" class="next-btn">Next Problem</button>
       </div>
