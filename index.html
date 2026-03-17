@@ -40,19 +40,6 @@
       padding: 10px 10px 18px;
     }
 
-    .hero h1 {
-      margin: 0;
-      font-size: clamp(2rem, 4vw, 3.2rem);
-      color: #ff5f8f;
-    }
-
-    .hero p {
-      margin: 10px auto 0;
-      max-width: 700px;
-      font-size: 1.08rem;
-      line-height: 1.5;
-    }
-
     .card {
       background: var(--card);
       border-radius: 24px;
@@ -63,7 +50,6 @@
     }
 
     .setup-row,
-    .answer-row,
     .operation-buttons,
     .stats-grid {
       display: grid;
@@ -73,15 +59,6 @@
     .setup-row {
       grid-template-columns: 1fr auto;
       align-items: end;
-    }
-
-    .answer-row {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      align-items: center;
-      margin-top: 18px;
-      flex-wrap: wrap;
     }
 
     .operation-buttons {
@@ -205,6 +182,13 @@
       text-align: center;
     }
 
+    .problem-label {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #4d6b8a;
+      margin-bottom: 10px;
+    }
+
     .problem-row {
       display: flex;
       align-items: center;
@@ -214,36 +198,87 @@
       margin-top: 10px;
     }
 
-    .answer-inline {
-      width: 120px;
-      max-width: 100%;
-      padding: 14px 12px;
-      border-radius: 16px;
-      border: 3px solid #d8e6f2;
-      font-size: 1.6rem;
-      font-weight: 800;
-      text-align: center;
-      background: #ffffff;
-    }
-
-    .answer-inline:focus {
-      border-color: var(--purple);
-      box-shadow: 0 0 0 4px rgba(177, 151, 252, 0.18);
-      outline: none;
-    }
-
-    .problem-label {
-      font-size: 1.05rem;
-      font-weight: 800;
-      color: #4d6b8a;
-      margin-bottom: 10px;
-    }
-
     .problem-text {
       font-size: clamp(2.8rem, 7vw, 4.4rem);
       font-weight: 900;
       letter-spacing: 2px;
-      margin: 8px 0 18px;
+      margin: 0;
+    }
+
+    .answer-inline {
+      width: 150px;
+      max-width: 100%;
+      padding: 18px 14px;
+      border-radius: 18px;
+      border: 4px solid #ffb347;
+      font-size: 2rem;
+      font-weight: 900;
+      text-align: center;
+      background: #fff8d9;
+      color: #22476d;
+      box-shadow: 0 6px 14px rgba(255, 179, 71, 0.25);
+    }
+
+    .answer-inline:focus {
+      border-color: #ff8a00;
+      box-shadow: 0 0 0 5px rgba(255, 179, 71, 0.28);
+      outline: none;
+      background: #fff3b8;
+    }
+
+    .visual-counting {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .count-group {
+      background: #ffffff;
+      border: 2px solid #d9e7f7;
+      border-radius: 18px;
+      padding: 12px;
+      min-height: 120px;
+    }
+
+    .count-title {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #22476d;
+      margin-bottom: 8px;
+    }
+
+    .count-items {
+      font-size: 2rem;
+      line-height: 1.4;
+      word-break: break-word;
+      min-height: 56px;
+    }
+
+    .count-operator {
+      font-size: 2.3rem;
+      font-weight: 900;
+      color: #ff5f8f;
+      align-self: center;
+      padding-top: 24px;
+    }
+
+    .count-equals {
+      font-size: 2.3rem;
+      font-weight: 900;
+      color: #22476d;
+      align-self: center;
+      padding-top: 24px;
+    }
+
+    .answer-row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      align-items: center;
+      margin-top: 18px;
+      flex-wrap: wrap;
     }
 
     .feedback {
@@ -346,18 +381,23 @@
         grid-template-columns: 1fr;
       }
 
+      .problem-row,
       .answer-row {
         flex-direction: column;
       }
 
-      .problem-row {
-        flex-direction: column;
+      .answer-inline {
+        width: 180px;
       }
 
-      .answer-inline {
-        width: 140px;
+      .visual-counting {
+        grid-template-columns: 1fr;
       }
-    }
+
+      .count-operator,
+      .count-equals {
+        padding-top: 0;
+      }
     }
   </style>
 </head>
@@ -406,27 +446,14 @@
             <circle cx="20" cy="14" r="2.5" fill="#333"></circle>
             <circle cx="32" cy="14" r="2.5" fill="#333"></circle>
             <path d="M18 23 Q26 30 34 23" fill="none" stroke="#333" stroke-width="2.5" stroke-linecap="round"></path>
-            <line x1="26" y1="-8" x2="26" y2="-16" stroke="#ffd36b" stroke-width="3" stroke-linecap="round"></line>
-            <line x1="12" y1="-3" x2="6" y2="-9" stroke="#ffd36b" stroke-width="3" stroke-linecap="round"></line>
-            <line x1="40" y1="-3" x2="46" y2="-9" stroke="#ffd36b" stroke-width="3" stroke-linecap="round"></line>
-            <line x1="8" y1="12" x2="0" y2="12" stroke="#ffd36b" stroke-width="3" stroke-linecap="round"></line>
-            <line x1="44" y1="12" x2="52" y2="12" stroke="#ffd36b" stroke-width="3" stroke-linecap="round"></line>
           </g>
 
           <g transform="translate(328,70)">
             <circle cx="18" cy="18" r="16" fill="#ffb6d9"></circle>
             <path d="M10 17 C10 11, 17 9, 18 14 C19 9, 26 11, 26 17 C26 24, 18 29, 18 29 C18 29, 10 24, 10 17 Z" fill="#ffffff"></path>
           </g>
-
-          <g transform="translate(302,28)">
-            <polygon points="12,0 15,9 24,9 17,15 20,24 12,18 4,24 7,15 0,9 9,9" fill="#ffd54f"></polygon>
-          </g>
-          <g transform="translate(320,120)">
-            <polygon points="10,0 12,7 20,7 14,12 16,20 10,15 4,20 6,12 0,7 8,7" fill="#ff9ac6"></polygon>
-          </g>
         </svg>
       </div>
-      
     </section>
 
     <section class="card">
@@ -462,12 +489,23 @@
         <div class="problem-label">Solve this math problem:</div>
         <div class="problem-row">
           <div class="problem-text" id="problemText">2 + 1 =</div>
-          <input id="answerInput" class="answer-inline" type="number" placeholder="?" />
+          <input id="answerInput" class="answer-inline" type="number" placeholder="Type answer" aria-label="Type answer" />
+        </div>
+        <div class="visual-counting">
+          <div class="count-group">
+            <div class="count-title" id="leftCountTitle">Count these</div>
+            <div class="count-items" id="leftCountItems">🍎 🍎</div>
+          </div>
+          <div class="count-operator" id="middleOperator">+</div>
+          <div class="count-group">
+            <div class="count-title" id="rightCountTitle">Count these</div>
+            <div class="count-items" id="rightCountItems">🍎</div>
+          </div>
+          <div class="count-equals">= ?</div>
         </div>
       </div>
 
       <div class="answer-row">
-        
         <button id="checkBtn" class="check-btn">Check</button>
         <button id="nextBtn" class="next-btn">Next Problem</button>
       </div>
@@ -485,10 +523,13 @@
       </div>
 
       <div class="stats-grid">
-        
         <div class="stat-box">
           Correct
           <span class="stat-value" id="correctValue">0</span>
+        </div>
+        <div class="stat-box">
+          Great Job
+          <span class="stat-value">⭐</span>
         </div>
       </div>
 
@@ -497,7 +538,7 @@
   </div>
 
   <div class="celebration" id="celebration">
-    <div class="celebration-text" id="celebrationText">Excellent!</div>
+    <div class="celebration-text" id="celebrationText">Fantastic Lyna!</div>
   </div>
 
   <script>
@@ -505,8 +546,8 @@
       playerName: "",
       mode: "add",
       score: 0,
-      triesLeft: 3,
       correct: 0,
+      triesLeft: 3,
       started: false,
       currentProblem: null
     };
@@ -526,8 +567,13 @@
       pointsInline: document.getElementById("pointsInline"),
       modeValue: document.getElementById("modeValue"),
       scoreValue: document.getElementById("scoreValue"),
-            correctValue: document.getElementById("correctValue"),
+      correctValue: document.getElementById("correctValue"),
       hintBox: document.getElementById("hintBox"),
+      leftCountTitle: document.getElementById("leftCountTitle"),
+      leftCountItems: document.getElementById("leftCountItems"),
+      rightCountTitle: document.getElementById("rightCountTitle"),
+      rightCountItems: document.getElementById("rightCountItems"),
+      middleOperator: document.getElementById("middleOperator"),
       celebration: document.getElementById("celebration"),
       celebrationText: document.getElementById("celebrationText"),
       opButtons: document.querySelectorAll(".op-btn")
@@ -538,29 +584,36 @@
     }
 
     function generateProblem(mode) {
-      let a, b, text, answer, explanation;
+      let a, b, text, answer;
 
       if (mode === "add") {
         a = randomInt(1, 10);
         b = randomInt(1, 10);
-        text = `${a} + ${b} = ?`;
+        text = `${a} + ${b} =`;
         answer = a + b;
-        explanation = `For adding, put the two groups together. Make sure you are combining both numbers, not leaving one out.`;
       } else if (mode === "sub") {
-        a = randomInt(3, 12);
+        a = randomInt(3, 10);
         b = randomInt(1, a - 1);
-        text = `${a} - ${b} = ?`;
+        text = `${a} - ${b} =`;
         answer = a - b;
-        explanation = `For subtracting, start with the bigger number and take away the smaller number. Be careful not to add by mistake.`;
       } else {
         a = randomInt(1, 5);
         b = randomInt(1, 5);
-        text = `${a} × ${b} = ?`;
+        text = `${a} × ${b} =`;
         answer = a * b;
-        explanation = `For multiplying, think of equal groups. ${a} × ${b} means ${a} groups of ${b}, or skip-count carefully.`;
       }
 
-      return { a, b, mode, text, answer, explanation };
+      return { a, b, mode, text, answer };
+    }
+
+    function getVisualSet(mode) {
+      if (mode === "add") return ["🍎", "🍊", "🍓", "🍌"];
+      if (mode === "sub") return ["🐶", "🐱", "🐰", "🐥"];
+      return ["⭐", "🧸", "🦋", "🍇"];
+    }
+
+    function repeatVisual(symbol, count) {
+      return Array.from({ length: count }, () => symbol).join(" ");
     }
 
     function getModeLabel() {
@@ -581,7 +634,7 @@
       elements.celebration.classList.add("show");
       setTimeout(() => {
         elements.celebration.classList.remove("show");
-      }, 1000);
+      }, 1600);
     }
 
     function setFeedback(message, kind = "") {
@@ -605,10 +658,22 @@
       elements.hintBox.innerHTML = `<strong>Hint:</strong> ${hint}`;
     }
 
+    function updateVisualCounting() {
+      if (!state.currentProblem) return;
+      const p = state.currentProblem;
+      const visuals = getVisualSet(p.mode);
+      const symbol = visuals[randomInt(0, visuals.length - 1)];
+      elements.leftCountItems.textContent = repeatVisual(symbol, p.a);
+      elements.rightCountItems.textContent = repeatVisual(symbol, p.b);
+      elements.leftCountTitle.textContent = `${p.a} to count`;
+      elements.rightCountTitle.textContent = `${p.b} to count`;
+      elements.middleOperator.textContent = p.mode === "add" ? "+" : p.mode === "sub" ? "−" : "×";
+    }
+
     function updateView() {
       elements.scoreValue.textContent = state.score;
       elements.pointsInline.textContent = `Points Earned: ${state.score}`;
-            elements.correctValue.textContent = state.correct;
+      elements.correctValue.textContent = state.correct;
       elements.modeValue.textContent = getModeDisplayName();
       elements.welcomeText.textContent = state.playerName
         ? `🎉 ${state.playerName} is playing!`
@@ -616,6 +681,7 @@
 
       if (state.currentProblem) {
         elements.problemText.textContent = state.currentProblem.text;
+        updateVisualCounting();
       }
     }
 
@@ -629,7 +695,7 @@
       if (similar) {
         setFeedback(`Let's try a similar <strong>${getModeLabel()}</strong> problem now. You can do it!`, "move");
       } else {
-        setFeedback(`Here is your next <strong>${getModeLabel()}</strong> problem. Look at the math sign and have fun!`);
+        setFeedback(`Here is your next <strong>${getModeLabel()}</strong> problem.`, "");
       }
 
       elements.answerInput.focus();
@@ -639,18 +705,14 @@
       const name = elements.playerName.value.trim();
       state.playerName = name || "Lyna";
       state.score = 0;
-      state.triesLeft = 3;
       state.correct = 0;
+      state.triesLeft = 3;
       state.started = true;
       state.currentProblem = generateProblem(state.mode);
       updateView();
       updateHint();
       setFeedback(`Welcome, <strong>${state.playerName}</strong>! You are now playing <strong>${getModeDisplayName()}</strong>.`);
       elements.answerInput.focus();
-    }
-
-    function explainWrong(inputValue) {
-      return `Wrong try again.`;
     }
 
     function checkAnswer() {
@@ -661,7 +723,7 @@
 
       const raw = elements.answerInput.value.trim();
       if (raw === "") {
-        setFeedback(`Please type an answer before checking.`, "retry");
+        setFeedback(`Please type an answer first.`, "retry");
         return;
       }
 
@@ -675,17 +737,16 @@
         showCelebration(praise);
         setFeedback(`<strong>${praise} ${state.playerName || "Lyna"}!</strong> 🎉 Correct answer. <strong>+10 points</strong>!`, "good");
         updateView();
-        setTimeout(() => nextProblem(false), 1000);
+        setTimeout(() => nextProblem(false), 1600);
         return;
       }
 
       state.triesLeft -= 1;
-      updateView();
 
       if (state.triesLeft > 0) {
         setFeedback(`<strong>Wrong try again</strong>`, "retry");
       } else {
-        setFeedback(`<strong>Wrong try again, you can do it Lyna</strong>`, "move");
+        setFeedback(`<strong>Wrong try again, you can do it ${state.playerName || "Lyna"}</strong>`, "move");
         setTimeout(() => nextProblem(true), 1400);
       }
     }
@@ -708,8 +769,8 @@
     function resetGame() {
       state.playerName = "";
       state.score = 0;
-      state.triesLeft = 3;
       state.correct = 0;
+      state.triesLeft = 3;
       state.started = false;
       state.currentProblem = generateProblem(state.mode);
       elements.playerName.value = "";
@@ -723,7 +784,7 @@
     elements.checkBtn.addEventListener("click", checkAnswer);
     elements.nextBtn.addEventListener("click", () => {
       if (!state.started) {
-        setFeedback(`Start the game first, then you can go to the next problem.`, "retry");
+        setFeedback(`Start the game first, then go to the next problem.`, "retry");
         return;
       }
       nextProblem(false);
@@ -741,6 +802,7 @@
     state.currentProblem = generateProblem(state.mode);
     updateView();
     updateHint();
+    updateVisualCounting();
   </script>
 </body>
 </html>
